@@ -7,17 +7,23 @@ def apply_coupons(cart, coupons)
     couponed_item_name = "#{coupons[counter][:item]} W/COUPON"
     cart_item_with_coupon = find_item_by_name_in_collection(couponed_item_name, cart)
     if cart_item && cart_item[:count] >= coupons[counter][:num]
-      
-      
+      if cart_item_with_coupon
+        cart_item_with_coupon[:coupon] += coupons[counter][:num]
+        cart_item[:count] -= coupons[counter][:num]
+      else
+        cart_item_with_coupon = {
+          :item => couponed_item_name,
+          :price => coupons[counter][:cost]/coupons[counter][:num],
+          :clearance => cart_item[:clearance],
+          :count => coupons[counter][:num]
+        }
+        cart << cart_item_with_coupon
+        cart_item[:count] -= coupons[counter][:num]
+      end 
     end  
     counter += 1
   end
-    if coupons[:items] && coupons[:count]<=cart[:count]
-      
-    end   
-  # Consult README for inputs and outputs
-  #
-  # REMEMBER: This method **should** update cart
+  cart
 end
 
 def apply_clearance(cart)
